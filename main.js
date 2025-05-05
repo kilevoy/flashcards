@@ -1,15 +1,12 @@
 let cards = [];
 let currentIndex = 0;
 let mistakes = [];
-let isAnswerShown = false;
-let timer;
 const questionEl = document.getElementById('question');
 const answerEl = document.getElementById('answer');
 const commentEl = document.getElementById('comment');
 const showAnswerBtn = document.getElementById('showAnswerBtn');
-const knowBtn = document.getElementById('knowBtn');
-const dontKnowBtn = document.getElementById('dontKnowBtn');
-const skipBtn = document.getElementById('skipBtn');
+const showChoicesBtn = document.getElementById('showChoicesBtn');
+const choicesEl = document.getElementById('choices');
 const progressEl = document.getElementById('progress');
 const toggleThemeBtn = document.getElementById('toggleThemeBtn');
 
@@ -17,20 +14,8 @@ fetch('data/cards.json')
   .then(response => response.json())
   .then(data => {
     cards = data;
-    loadFromStorage();
     showCard();
   });
-
-function loadFromStorage() {
-  const storedMistakes = localStorage.getItem('mistakes');
-  if (storedMistakes) {
-    mistakes = JSON.parse(storedMistakes);
-  }
-}
-
-function saveToStorage() {
-  localStorage.setItem('mistakes', JSON.stringify(mistakes));
-}
 
 function showCard() {
   if (currentIndex >= cards.length) {
@@ -38,16 +23,14 @@ function showCard() {
       cards = mistakes.slice();
       mistakes = [];
       currentIndex = 0;
-      alert('Теперь повторим карточки с ошибками!');
-      saveToStorage();
+      alert('Повторяем ошибочные карточки!');
     } else {
-      questionEl.textContent = 'Вы выучили все карточки!';
+      questionEl.textContent = 'Все карточки пройдены!';
       answerEl.classList.add('hidden');
       commentEl.classList.add('hidden');
+      choicesEl.classList.add('hidden');
       showAnswerBtn.classList.add('hidden');
-      knowBtn.classList.add('hidden');
-      dontKnowBtn.classList.add('hidden');
-      skipBtn.classList.add('hidden');
+      showChoicesBtn.classList.add('hidden');
       return;
     }
   }
@@ -57,44 +40,57 @@ function showCard() {
   commentEl.textContent = card.comment;
   answerEl.classList.add('hidden');
   commentEl.classList.add('hidden');
+  choicesEl.classList.add('hidden');
   showAnswerBtn.classList.remove('hidden');
-  knowBtn.classList.add('hidden');
-  dontKnowBtn.classList.add('hidden');
-  skipBtn.classList.add('hidden');
-  isAnswerShown = false;
+  showChoicesBtn.classList.remove('hidden');
   progressEl.textContent = `Прогресс: ${currentIndex + 1}/${cards.length}`;
-  clearTimeout(timer);
-  timer = setTimeout(() => {
-    showAnswer();
-  }, 30000);
+  choicesEl.innerHTML = '';
 }
 
 function showAnswer() {
   answerEl.classList.remove('hidden');
   commentEl.classList.remove('hidden');
   showAnswerBtn.classList.add('hidden');
-  knowBtn.classList.remove('hidden');
-  dontKnowBtn.classList.remove('hidden');
-  skipBtn.classList.remove('hidden');
-  isAnswerShown = true;
+  showChoicesBtn.classList.add('hidden');
+}
+
+function showChoices() {
+  let card = cards[currentIndex];
+  let shuffled = card.choices.sort(() => Math.random() - 0.5);
+  choicesEl.innerHTML = '';
+  shuffled.forEach(choice => {
+    let btn = document.createElement('button');
+    btn.textContent = choice;
+    btn.classList.add('choice-btn');
+    btn.onclick = () => checkAnswer(choice === card.answer, btn);
+    choicesEl.appendChild(btn);
+  });
+  choicesEl.classList.remove('hidden');
+  showAnswerBtn.classList.add('hidden');
+  showChoicesBtn.classList.add('hidden');
+}
+
+function checkAnswer(correct, btn) {
+  if (correct) {
+    btn.classList.add('correct');
+    setTimeout(() => {
+      currentIndex++;
+      showCard();
+    }, 1500);
+  } else {
+    btn.classList.add('wrong');
+    let correctBtn = [...choicesEl.children].find(b => b.textContent === cards[currentIndex].answer);
+    if (correctBtn) correctBtn.classList.add('correct');
+    mistakes.push(cards[currentIndex]);
+    setTimeout(() => {
+      currentIndex++;
+      showCard();
+    }, 2000);
+  }
 }
 
 showAnswerBtn.addEventListener('click', showAnswer);
-knowBtn.addEventListener('click', () => {
-  currentIndex++;
-  showCard();
-});
-dontKnowBtn.addEventListener('click', () => {
-  mistakes.push(cards[currentIndex]);
-  currentIndex++;
-  saveToStorage();
-  showCard();
-});
-skipBtn.addEventListener('click', () => {
-  currentIndex++;
-  showCard();
-});
-
+showChoicesBtn.addEventListener('click', showChoices);
 toggleThemeBtn.addEventListener('click', () => {
   document.body.classList.toggle('dark');
 });

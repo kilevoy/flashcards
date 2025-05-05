@@ -3,22 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flashcards App</title>
+  <title>Flashcards App (Quizlet style)</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
   <div class="container">
     <h1>Flashcards</h1>
     <div id="card">
-      <div id="question">Вопрос загружается...</div>
+      <div id="question">Загрузка вопроса...</div>
+      <div id="choices" class="hidden"></div>
       <div id="answer" class="hidden"></div>
       <div id="comment" class="hidden"></div>
     </div>
     <div id="controls">
       <button id="showAnswerBtn">Показать ответ</button>
-      <button id="knowBtn" class="hidden">Я знаю</button>
-      <button id="dontKnowBtn" class="hidden">Я не знаю</button>
-      <button id="skipBtn" class="hidden">Пропустить</button>
+      <button id="showChoicesBtn">Показать варианты</button>
       <button id="toggleThemeBtn">Сменить тему</button>
     </div>
     <div id="progress">Прогресс: 0/0</div>

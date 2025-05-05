@@ -21,24 +21,43 @@ body.dark {
 }
 #card {
   background: #fff;
-  border-radius: 10px;
+  border-radius: 12px;
   padding: 20px;
   margin-bottom: 10px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 body.dark #card {
   background: #333;
 }
 button {
   margin: 5px;
-  padding: 10px 20px;
+  padding: 12px 24px;
   border: none;
-  border-radius: 8px;
+  border-radius: 10px;
   cursor: pointer;
+  font-size: 16px;
 }
 button:hover {
-  opacity: 0.9;
+  opacity: 0.95;
 }
 .hidden {
   display: none;
+}
+.choice-btn {
+  display: block;
+  width: 100%;
+  margin: 5px 0;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+.choice-btn.correct {
+  background-color: #4CAF50;
+  color: #fff;
+}
+.choice-btn.wrong {
+  background-color: #F44336;
+  color: #fff;
 }
